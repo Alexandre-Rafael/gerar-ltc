@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Cubano";
+  src: url("/fonts/Cubano.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Hard-offset comic shadow on story title lines only */
+.story-title-line {
+  -webkit-text-stroke: 5px #07111d;
+  paint-order: stroke fill;
+  text-shadow: -8px 8px 0 #07111d;
+}
