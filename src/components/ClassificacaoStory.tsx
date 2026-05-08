@@ -7,18 +7,12 @@ interface Props {
   tabela: ClassificacaoItem[];
 }
 
+const GRID = "58px 1fr 75px 54px 54px 54px 54px 64px";
+const COL_HEADS = ["#", "EQUIPE", "PTS", "J", "V", "E", "D", "SG"] as const;
+
 function Dot() {
   return (
-    <span
-      style={{
-        width: 7,
-        height: 7,
-        borderRadius: "50%",
-        background: "#c7f465",
-        display: "inline-block",
-        flexShrink: 0,
-      }}
-    />
+    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#c7f465", display: "inline-block", flexShrink: 0 }} />
   );
 }
 
@@ -26,25 +20,22 @@ function TitleLine({ text, color, size }: { text: string; color: string; size: n
   return (
     <span
       className="story-title-line"
-      style={
-        {
-          display: "block",
-          fontFamily: "'Cubano', Impact, Arial, sans-serif",
-          fontSize: size,
-          color,
-          letterSpacing: "0.5px",
-        } as React.CSSProperties
-      }
+      style={{ display: "block", fontFamily: "'Cubano', Impact, Arial, sans-serif", fontSize: size, color, letterSpacing: "0.5px", lineHeight: 0.88 } as React.CSSProperties}
     >
       {text}
     </span>
   );
 }
 
-const COLS = ["#", "TIME", "PTS", "J", "V", "E", "D", "SG"] as const;
-const GRID = "52px 1fr 68px 48px 48px 48px 48px 60px";
+function ptBR(date: Date) {
+  return date
+    .toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
+    .toUpperCase();
+}
 
 export function ClassificacaoStory({ label, tabela }: Props) {
+  const dateLabel = ptBR(new Date());
+
   return (
     <div
       style={{
@@ -57,10 +48,10 @@ export function ClassificacaoStory({ label, tabela }: Props) {
         flexShrink: 0,
       }}
     >
-      {/* HERO */}
+      {/* ── HERO ── */}
       <section
         style={{
-          height: 390,
+          height: 340,
           background: "#08a7cf",
           position: "relative",
           display: "flex",
@@ -69,17 +60,27 @@ export function ClassificacaoStory({ label, tabela }: Props) {
           gap: 34,
         }}
       >
+        {/* lime stripe */}
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 7, background: "#c7f465" }} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", lineHeight: 0.88 }}>
-          <TitleLine text="CLASSI" color="#f9f9f9" size={118} />
-          <TitleLine text="FICA" color="#c7f465" size={118} />
-          <TitleLine text="ÇÃO" color="#f9f9f9" size={110} />
+
+        {/* Title block */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+          {/* "CLASSIFICAÇÃO" — one line, white */}
+          <TitleLine text="CLASSIFICAÇÃO" color="#f9f9f9" size={86} />
+          {/* Division name — lime, larger */}
+          <TitleLine text={label} color="#c7f465" size={100} />
         </div>
+
+        {/* Logo — clean, no effects */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="LTC" style={{ width: 140, height: 140, objectFit: "contain" }} />
+        <img
+          src="/logo.png"
+          alt="LTC"
+          style={{ width: 148, height: 148, objectFit: "contain", flexShrink: 0 }}
+        />
       </section>
 
-      {/* META BAR */}
+      {/* ── META BAR ── */}
       <section
         style={{
           height: 54,
@@ -92,34 +93,66 @@ export function ClassificacaoStory({ label, tabela }: Props) {
       >
         <Dot />
         <span style={{ fontFamily: "'Cubano', Impact, Arial, sans-serif", fontSize: 25, color: "#f9f9f9", letterSpacing: 3 }}>
-          {label.toUpperCase()}
+          ATUALIZAÇÃO · {dateLabel}
         </span>
         <Dot />
       </section>
 
-      {/* TABLE */}
+      {/* ── TABLE ── */}
       <section style={{ padding: "44px 52px" }}>
-        <div style={{ background: "#fff", border: "1px solid #e3e8ec", borderRadius: 9, overflow: "hidden" }}>
-          {/* Header row */}
+        <div
+          style={{
+            background: "#fff",
+            border: "1px solid #e3e8ec",
+            borderRadius: 9,
+            overflow: "hidden",
+          }}
+        >
+          {/* Card division header */}
+          <header
+            style={{
+              height: 48,
+              background: "#08a7cf",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "0 24px",
+            }}
+          >
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c7f465", flexShrink: 0 }} />
+            <span
+              style={{
+                fontFamily: "'Cubano', Impact, Arial, sans-serif",
+                fontSize: 30,
+                color: "#f9f9f9",
+                letterSpacing: 2,
+              }}
+            >
+              {label}
+            </span>
+          </header>
+
+          {/* Column sub-header */}
           <div
             style={{
               display: "grid",
               gridTemplateColumns: GRID,
-              background: "#08a7cf",
-              padding: "14px 20px",
+              padding: "10px 24px",
               gap: 8,
-              alignItems: "center",
+              background: "#f0f4f7",
+              borderBottom: "1px solid #e3e8ec",
             }}
           >
-            {COLS.map((h, i) => (
+            {COL_HEADS.map((h, i) => (
               <span
                 key={h}
                 style={{
-                  fontFamily: "'Cubano', Impact, Arial, sans-serif",
-                  fontSize: 22,
-                  color: "#f9f9f9",
+                  fontSize: 19,
+                  fontWeight: 700,
+                  color: "#9aaab5",
                   letterSpacing: 1,
-                  textAlign: i === 1 ? "left" : "center",
+                  textAlign: i <= 1 ? "left" : "center",
+                  textTransform: "uppercase",
                 }}
               >
                 {h}
@@ -129,7 +162,7 @@ export function ClassificacaoStory({ label, tabela }: Props) {
 
           {/* Data rows */}
           {tabela.length === 0 ? (
-            <p style={{ padding: "40px 20px", textAlign: "center", color: "#aaa", fontSize: 24 }}>
+            <p style={{ padding: "40px 24px", textAlign: "center", color: "#aaa", fontSize: 24 }}>
               Nenhuma classificação extraída.
             </p>
           ) : (
@@ -139,54 +172,64 @@ export function ClassificacaoStory({ label, tabela }: Props) {
                 style={{
                   display: "grid",
                   gridTemplateColumns: GRID,
-                  padding: "15px 20px",
+                  padding: "17px 24px",
                   gap: 8,
                   alignItems: "center",
                   borderTop: i === 0 ? "none" : "1px solid #edf0f2",
-                  background: i % 2 === 0 ? "#fff" : "#fafbfc",
+                  background: i % 2 === 0 ? "#ffffff" : "#fafbfc",
                 }}
               >
                 {/* Pos */}
                 <span
                   style={{
-                    fontSize: 22,
+                    fontSize: 26,
                     fontWeight: 900,
-                    color: row.pos <= 4 ? "#08a7cf" : "#07111d",
-                    textAlign: "center",
+                    color: row.pos <= 4 ? "#08a7cf" : "#b0bec5",
+                    textAlign: "left",
                   }}
                 >
                   {row.pos}
                 </span>
-                {/* Time */}
-                <span style={{ fontSize: 23, fontWeight: 800, color: "#07111d" }}>{row.time}</span>
+
+                {/* Team name */}
+                <span style={{ fontSize: 24, fontWeight: 800, color: "#07111d" }}>
+                  {row.time}
+                </span>
+
                 {/* PTS */}
                 <span
                   style={{
-                    fontFamily: "'Cubano', Impact, Arial, sans-serif",
-                    fontSize: 24,
-                    color: "#f9f9f9",
-                    background: "#0b1220",
-                    borderRadius: 6,
-                    padding: "3px 0",
+                    fontSize: 26,
+                    fontWeight: 900,
+                    color: "#07111d",
                     textAlign: "center",
-                    display: "block",
                   }}
                 >
                   {row.pts}
                 </span>
+
                 {/* J, V, E, D */}
                 {[row.j, row.v, row.e, row.d].map((val, j) => (
-                  <span key={j} style={{ fontSize: 21, fontWeight: 700, color: "#666", textAlign: "center" }}>
+                  <span
+                    key={j}
+                    style={{
+                      fontSize: 22,
+                      fontWeight: 600,
+                      color: "#7a8a95",
+                      textAlign: "center",
+                    }}
+                  >
                     {val}
                   </span>
                 ))}
+
                 {/* SG */}
                 <span
                   style={{
-                    fontSize: 21,
+                    fontSize: 22,
                     fontWeight: 700,
                     textAlign: "center",
-                    color: row.sg > 0 ? "#1a9e3f" : row.sg < 0 ? "#c0392b" : "#666",
+                    color: row.sg > 0 ? "#1a9e3f" : row.sg < 0 ? "#c0392b" : "#7a8a95",
                   }}
                 >
                   {row.sg > 0 ? `+${row.sg}` : row.sg}
