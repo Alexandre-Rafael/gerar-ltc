@@ -5,18 +5,47 @@ import { Divisao, Jogo } from "@/types";
 interface Props {
   divisoes: Divisao[];
   rodada: string;
+  page: number;
+  total: number;
 }
 
-/* ── helpers ────────────────────────────────────────────────── */
+function Dot() {
+  return (
+    <span
+      style={{
+        width: 7,
+        height: 7,
+        borderRadius: "50%",
+        background: "#c7f465",
+        display: "inline-block",
+        flexShrink: 0,
+      }}
+    />
+  );
+}
+
+function TitleLine({ text, color, size }: { text: string; color: string; size: number }) {
+  return (
+    <span
+      className="story-title-line"
+      style={
+        {
+          display: "block",
+          fontFamily: "'Cubano', Impact, Arial, sans-serif",
+          fontSize: size,
+          color,
+          letterSpacing: "0.5px",
+        } as React.CSSProperties
+      }
+    >
+      {text}
+    </span>
+  );
+}
 
 function GameRow({ jogo, isFirst }: { jogo: Jogo; isFirst: boolean }) {
   return (
-    <div
-      style={{
-        padding: "15px 26px 14px",
-        borderTop: isFirst ? "none" : "1px solid #edf0f2",
-      }}
-    >
+    <div style={{ padding: "15px 26px 14px", borderTop: isFirst ? "none" : "1px solid #edf0f2" }}>
       <div
         style={{
           display: "grid",
@@ -26,53 +55,18 @@ function GameRow({ jogo, isFirst }: { jogo: Jogo; isFirst: boolean }) {
           marginBottom: 8,
         }}
       >
-        <span
-          style={{
-            fontSize: 25,
-            fontWeight: 900,
-            lineHeight: 1.15,
-            letterSpacing: "-0.2px",
-            textAlign: "left",
-            color: "#07111d",
-          }}
-        >
+        <span style={{ fontSize: 25, fontWeight: 900, lineHeight: 1.15, letterSpacing: "-0.2px", textAlign: "left", color: "#07111d" }}>
           {jogo.casa}
         </span>
-        <span
-          style={{
-            fontFamily: "'Cubano', Impact, Arial, sans-serif",
-            fontSize: 21,
-            color: "#08a7cf",
-            opacity: 0.65,
-            textAlign: "center",
-          }}
-        >
+        <span style={{ fontFamily: "'Cubano', Impact, Arial, sans-serif", fontSize: 21, color: "#08a7cf", opacity: 0.65, textAlign: "center" }}>
           VS
         </span>
-        <span
-          style={{
-            fontSize: 25,
-            fontWeight: 900,
-            lineHeight: 1.15,
-            letterSpacing: "-0.2px",
-            textAlign: "right",
-            color: "#07111d",
-          }}
-        >
+        <span style={{ fontSize: 25, fontWeight: 900, lineHeight: 1.15, letterSpacing: "-0.2px", textAlign: "right", color: "#07111d" }}>
           {jogo.fora}
         </span>
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 18,
-        }}
-      >
-        <span style={{ fontSize: 18, fontWeight: 700, color: "#969fa9" }}>
-          {jogo.campo}
-        </span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 18 }}>
+        <span style={{ fontSize: 18, fontWeight: 700, color: "#969fa9" }}>{jogo.campo}</span>
         <span
           style={{
             fontFamily: "'Cubano', Impact, Arial, sans-serif",
@@ -95,14 +89,7 @@ function GameRow({ jogo, isFirst }: { jogo: Jogo; isFirst: boolean }) {
 function DivCard({ divisao }: { divisao: Divisao }) {
   if (divisao.jogos.length === 0) return null;
   return (
-    <article
-      style={{
-        background: "#fff",
-        border: "1px solid #e3e8ec",
-        borderRadius: 9,
-        overflow: "hidden",
-      }}
-    >
+    <article style={{ background: "#fff", border: "1px solid #e3e8ec", borderRadius: 9, overflow: "hidden" }}>
       <header
         style={{
           height: 44,
@@ -113,15 +100,7 @@ function DivCard({ divisao }: { divisao: Divisao }) {
           padding: "0 24px",
         }}
       >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: "#c7f465",
-            flexShrink: 0,
-          }}
-        />
+        <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#c7f465", flexShrink: 0 }} />
         <h2
           style={{
             fontFamily: "'Cubano', Impact, Arial, sans-serif",
@@ -129,6 +108,7 @@ function DivCard({ divisao }: { divisao: Divisao }) {
             color: "#f9f9f9",
             letterSpacing: 2,
             fontWeight: "normal",
+            margin: 0,
           }}
         >
           {divisao.label}
@@ -141,14 +121,13 @@ function DivCard({ divisao }: { divisao: Divisao }) {
   );
 }
 
-/* ── main component ─────────────────────────────────────────── */
-
-export function StoryPreview({ divisoes, rodada }: Props) {
-  const activeDivisoes = divisoes.filter((d) => d.jogos.length > 0);
+export function StoryPreview({ divisoes, rodada, page, total }: Props) {
+  const active = divisoes.filter((d) => d.jogos.length > 0);
+  const metaLabel = total > 1 ? `${rodada} · PÁG ${page}/${total}` : rodada;
 
   return (
     <div
-      id="story-capture"
+      id={`story-capture-${page}`}
       style={{
         width: 1080,
         height: 1920,
@@ -159,7 +138,7 @@ export function StoryPreview({ divisoes, rodada }: Props) {
         flexShrink: 0,
       }}
     >
-      {/* ── HERO ── */}
+      {/* HERO */}
       <section
         style={{
           height: 390,
@@ -171,41 +150,17 @@ export function StoryPreview({ divisoes, rodada }: Props) {
           gap: 34,
         }}
       >
-        {/* lime stripe */}
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 7,
-            background: "#c7f465",
-          }}
-        />
-
-        {/* title */}
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 7, background: "#c7f465" }} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", lineHeight: 0.88 }}>
-          {(
-            [
-              { text: "JOGOS", color: "#f9f9f9", size: 112 },
-              { text: "DA", color: "#c7f465", size: 108 },
-              { text: "RODADA", color: "#f9f9f9", size: 100 },
-            ] as const
-          ).map(({ text, color, size }) => (
-            <TitleLine key={text} text={text} color={color} size={size} />
-          ))}
+          <TitleLine text="JOGOS" color="#f9f9f9" size={112} />
+          <TitleLine text="DA" color="#c7f465" size={108} />
+          <TitleLine text="RODADA" color="#f9f9f9" size={100} />
         </div>
-
-        {/* logo */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo.png"
-          alt="LTC"
-          style={{ width: 140, height: 140, objectFit: "contain" }}
-        />
+        <img src="/logo.png" alt="LTC" style={{ width: 140, height: 140, objectFit: "contain" }} />
       </section>
 
-      {/* ── META BAR ── */}
+      {/* META BAR */}
       <section
         style={{
           height: 54,
@@ -217,88 +172,22 @@ export function StoryPreview({ divisoes, rodada }: Props) {
         }}
       >
         <Dot />
-        <span
-          style={{
-            fontFamily: "'Cubano', Impact, Arial, sans-serif",
-            fontSize: 25,
-            color: "#f9f9f9",
-            letterSpacing: 3,
-          }}
-        >
-          {rodada.toUpperCase()}
+        <span style={{ fontFamily: "'Cubano', Impact, Arial, sans-serif", fontSize: 25, color: "#f9f9f9", letterSpacing: 3 }}>
+          {metaLabel.toUpperCase()}
         </span>
         <Dot />
       </section>
 
-      {/* ── CARDS ── */}
-      <section
-        style={{
-          padding: "34px 52px 36px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 16,
-        }}
-      >
-        {activeDivisoes.length === 0 ? (
-          <p
-            style={{
-              textAlign: "center",
-              color: "#aaa",
-              fontSize: 28,
-              marginTop: 60,
-            }}
-          >
+      {/* CARDS */}
+      <section style={{ padding: "34px 52px 36px", display: "flex", flexDirection: "column", gap: 16 }}>
+        {active.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#aaa", fontSize: 28, marginTop: 60 }}>
             Nenhum jogo extraído ainda.
           </p>
         ) : (
-          activeDivisoes.map((d) => <DivCard key={d.key} divisao={d} />)
+          active.map((d) => <DivCard key={d.key} divisao={d} />)
         )}
       </section>
     </div>
-  );
-}
-
-/* ── tiny helpers ───────────────────────────────────────────── */
-
-function Dot() {
-  return (
-    <span
-      style={{
-        width: 7,
-        height: 7,
-        borderRadius: "50%",
-        background: "#c7f465",
-        display: "inline-block",
-        flexShrink: 0,
-      }}
-    />
-  );
-}
-
-function TitleLine({
-  text,
-  color,
-  size,
-}: {
-  text: string;
-  color: string;
-  size: number;
-}) {
-  return (
-    <span
-      className="story-title-line"
-      style={
-        {
-          display: "block",
-          fontFamily: "'Cubano', Impact, Arial, sans-serif",
-          fontSize: size,
-          color,
-          letterSpacing: "0.5px",
-          // paint-order and webkit-text-stroke applied via CSS class below
-        } as React.CSSProperties
-      }
-    >
-      {text}
-    </span>
   );
 }

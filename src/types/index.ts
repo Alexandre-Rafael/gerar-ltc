@@ -20,3 +20,23 @@ export interface DivisaoUpload {
   jogos: Jogo[];
   erro: string | null;
 }
+
+export interface ClassificacaoItem {
+  pos: number;
+  time: string;
+  pts: number;
+  j: number;
+  v: number;
+  e: number;
+  d: number;
+  sg: number;
+}
+
+export interface DivisaoClassificacaoUpload {
+  key: string;
+  label: string;
+  arquivo: File | null;
+  processando: boolean;
+  tabela: ClassificacaoItem[];
+  erro: string | null;
+}
