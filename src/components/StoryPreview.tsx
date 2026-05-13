@@ -153,12 +153,18 @@ export function StoryPreview({ divisoes, rodada, page, total, campeonato = "Copa
       >
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 7, background: "#c7f465" }} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", lineHeight: 0.88 }}>
-          <TitleLine text="JOGOS" color="#f9f9f9" size={112} />
-          <TitleLine text="DA" color="#c7f465" size={108} />
-          <TitleLine text="RODADA" color="#f9f9f9" size={100} />
-          <span style={{ fontFamily: "Arial, sans-serif", fontSize: 28, fontWeight: 700, color: "#c7f465", letterSpacing: 2, marginTop: 10, opacity: 0.85 }}>
-            {campeonato.toUpperCase()}
-          </span>
+          {campeonato === "Copa Sicredi" ? (
+            <>
+              <TitleLine text="COPA" color="#f9f9f9" size={112} />
+              <TitleLine text="SICREDI" color="#c7f465" size={100} />
+            </>
+          ) : (
+            <>
+              <TitleLine text="JOGOS" color="#f9f9f9" size={112} />
+              <TitleLine text="DA" color="#c7f465" size={108} />
+              <TitleLine text="RODADA" color="#f9f9f9" size={100} />
+            </>
+          )}
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="LTC" style={{ width: 140, height: 140, objectFit: "contain" }} />
