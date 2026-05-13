@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const imageFile = formData.get("image") as File | null;
   const divisao = formData.get("divisao") as string;
+  const campeonato = (formData.get("campeonato") as string) || "Copa Fácil";
 
   if (!imageFile) {
     return NextResponse.json({ jogos: [] }, { status: 400 });
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
           },
           {
             type: "text",
-            text: `Analise esta tabela de jogos do Copa Fácil (divisão: ${divisao}).
+            text: `Analise esta tabela de jogos do ${campeonato} (divisão: ${divisao}).
 
 Extraia APENAS os jogos com status em aberto (não encerrados, sem placar).
 Retorne SOMENTE um JSON válido, sem texto extra:

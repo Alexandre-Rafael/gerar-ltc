@@ -8,6 +8,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const imageFile = formData.get("image") as File | null;
   const divisao = formData.get("divisao") as string;
+  const campeonato = (formData.get("campeonato") as string) || "Copa Fácil";
 
   if (!imageFile) return NextResponse.json({ classificacao: [] }, { status: 400 });
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
           },
           {
             type: "text",
-            text: `Analise esta tabela de classificação do Copa Fácil (${divisao}).
+            text: `Analise esta tabela de classificação do ${campeonato} (${divisao}).
 Extraia todos os times com: posição, nome, pontos, jogos, vitórias, empates, derrotas, saldo de gols.
 Retorne SOMENTE JSON válido, sem texto extra:
 

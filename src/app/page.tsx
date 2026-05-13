@@ -14,7 +14,9 @@ import {
 
 /* ── constants ─────────────────────────────────────────────── */
 
-const DIVISOES_BASE = [
+type DivisaoBase = { key: string; label: string };
+
+const DIVISOES_COPA_FACIL: DivisaoBase[] = [
   { key: "primeira", label: "1ª DIVISÃO" },
   { key: "segunda",  label: "2ª DIVISÃO" },
   { key: "terceira", label: "3ª DIVISÃO" },
@@ -22,8 +24,22 @@ const DIVISOES_BASE = [
   { key: "seniorB",  label: "SÊNIOR B"   },
 ];
 
-const mkJogos  = (): DivisaoUpload[]              => DIVISOES_BASE.map(d => ({ ...d, arquivo: null, processando: false, jogos:   [], erro: null }));
-const mkClass  = (): DivisaoClassificacaoUpload[] => DIVISOES_BASE.map(d => ({ ...d, arquivo: null, processando: false, tabela: [], erro: null }));
+const DIVISOES_COPA_SICREDI: DivisaoBase[] = [
+  { key: "mascPreMirim", label: "MASCULINO PRÉ-MIRIM" },
+  { key: "mascMirim",    label: "MASCULINO MIRIM"     },
+  { key: "mascInfantil", label: "MASCULINO INFANTIL"  },
+  { key: "femInfantil",  label: "FEMININO INFANTIL"   },
+  { key: "femAdulto",    label: "FEMININO ADULTO"     },
+  { key: "masterOuro",   label: "MASTER OURO"         },
+];
+
+const DIVISOES_POR_CAMPEONATO: Record<Campeonato, DivisaoBase[]> = {
+  "Copa Fácil":   DIVISOES_COPA_FACIL,
+  "Copa Sicredi": DIVISOES_COPA_SICREDI,
+};
+
+const mkJogos  = (divs: DivisaoBase[]): DivisaoUpload[]              => divs.map(d => ({ ...d, arquivo: null, processando: false, jogos:   [], erro: null }));
+const mkClass  = (divs: DivisaoBase[]): DivisaoClassificacaoUpload[] => divs.map(d => ({ ...d, arquivo: null, processando: false, tabela: [], erro: null }));
 
 /* ── split logic ───────────────────────────────────────────── */
 const CARD_HEAD  = 44;
@@ -57,12 +73,24 @@ function splitPages(divs: Divisao[]): Divisao[][] {
 
 /* ── main page ─────────────────────────────────────────────── */
 
+const CAMPEONATOS = ["Copa Fácil", "Copa Sicredi"] as const;
+type Campeonato = (typeof CAMPEONATOS)[number];
+
 type Tab = "jogos" | "classificacao";
 
 export default function Home() {
   const [tab, setTab]               = useState<Tab>("jogos");
-  const [divisoes, setDivisoes]     = useState<DivisaoUpload[]>(mkJogos());
-  const [classDiv, setClassDiv]     = useState<DivisaoClassificacaoUpload[]>(mkClass());
+  const [campeonato, setCampeonato] = useState<Campeonato>("Copa Fácil");
+  const [divisoes, setDivisoes]     = useState<DivisaoUpload[]>(mkJogos(DIVISOES_COPA_FACIL));
+  const [classDiv, setClassDiv]     = useState<DivisaoClassificacaoUpload[]>(mkClass(DIVISOES_COPA_FACIL));
+
+  function selecionarCampeonato(c: Campeonato) {
+    setCampeonato(c);
+    const divs = DIVISOES_POR_CAMPEONATO[c];
+    setDivisoes(mkJogos(divs));
+    setClassDiv(mkClass(divs));
+    setPreviewPage(0);
+  }
   const [rodada, setRodada]         = useState("6ª RODADA · JOGOS EM ABERTO");
   const [previewPage, setPreviewPage] = useState(0);
   const [gerando, setGerando]       = useState(false);
@@ -88,6 +116,7 @@ export default function Home() {
         const fd = new FormData();
         fd.append("image", div.arquivo!);
         fd.append("divisao", div.label);
+        fd.append("campeonato", campeonato);
         const res  = await fetch("/api/extract", { method: "POST", body: fd });
         const data = await res.json() as { jogos: Jogo[] };
         updateJogo(div.key, { jogos: data.jogos, processando: false });
@@ -108,6 +137,7 @@ export default function Home() {
         const fd = new FormData();
         fd.append("image", div.arquivo!);
         fd.append("divisao", div.label);
+        fd.append("campeonato", campeonato);
         const res  = await fetch("/api/extract-classificacao", { method: "POST", body: fd });
         const data = await res.json() as { classificacao: ClassificacaoItem[] };
         updateClass(div.key, { tabela: data.classificacao, processando: false });
@@ -173,6 +203,21 @@ export default function Home() {
           <h1 className="font-bold text-base leading-tight tracking-wide">LTC · Gerador de Stories</h1>
           <p className="text-xs text-white/30 tracking-widest">LAGOA TÊNIS CLUBE</p>
         </div>
+        {/* Championship selector */}
+        <div className="flex gap-1 bg-white/5 rounded-xl p-1">
+          {CAMPEONATOS.map(c => (
+            <button
+              key={c}
+              onClick={() => selecionarCampeonato(c)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold tracking-widest transition-all ${
+                campeonato === c ? "bg-[#c7f465] text-[#07111d]" : "text-white/40 hover:text-white/70"
+              }`}
+            >
+              {c.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
         {/* Tabs */}
         <div className="ml-auto flex gap-1 bg-white/5 rounded-xl p-1">
           {(["jogos", "classificacao"] as Tab[]).map(t => (
