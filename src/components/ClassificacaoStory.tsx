@@ -5,6 +5,7 @@ import { ClassificacaoItem } from "@/types";
 interface Props {
   label: string;
   tabela: ClassificacaoItem[];
+  campeonato?: string;
 }
 
 const GRID = "58px 1fr 75px 54px 54px 54px 54px 64px";
@@ -33,7 +34,7 @@ function ptBR(date: Date) {
     .toUpperCase();
 }
 
-export function ClassificacaoStory({ label, tabela }: Props) {
+export function ClassificacaoStory({ label, tabela, campeonato = "Copa Fácil" }: Props) {
   const dateLabel = ptBR(new Date());
 
   return (
@@ -65,6 +66,9 @@ export function ClassificacaoStory({ label, tabela }: Props) {
 
         {/* Title block */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+          <span style={{ fontFamily: "Arial, sans-serif", fontSize: 28, fontWeight: 700, color: "#c7f465", letterSpacing: 2, opacity: 0.85, lineHeight: 1.2 }}>
+            {campeonato.toUpperCase()}
+          </span>
           {/* "CLASSIFICAÇÃO" — one line, white */}
           <TitleLine text="CLASSIFICAÇÃO" color="#f9f9f9" size={86} />
           {/* Division name — lime, larger */}

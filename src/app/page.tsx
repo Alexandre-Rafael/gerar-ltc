@@ -311,7 +311,7 @@ export default function Home() {
               )}
               {/* Scaled preview */}
               <div style={{ transform: "scale(0.35)", transformOrigin: "top center", marginBottom: -1920 * 0.65 }}>
-                <StoryPreview divisoes={storyPages[curPage] ?? []} rodada={rodada} page={curPage + 1} total={storyPages.length} />
+                <StoryPreview divisoes={storyPages[curPage] ?? []} rodada={rodada} page={curPage + 1} total={storyPages.length} campeonato={campeonato} />
               </div>
             </>
           ) : (
@@ -334,6 +334,7 @@ export default function Home() {
                 <ClassificacaoStory
                   label={classDiv[classPreview]?.label ?? ""}
                   tabela={classDiv[classPreview]?.tabela ?? []}
+                  campeonato={campeonato}
                 />
               </div>
             </>
@@ -346,14 +347,14 @@ export default function Home() {
         {/* Story pages */}
         {storyPages.map((page, i) => (
           <div key={`cap-${i}`} ref={el => { captureRefs.current[i] = el; }}>
-            <StoryPreview divisoes={page} rodada={rodada} page={i + 1} total={storyPages.length} />
+            <StoryPreview divisoes={page} rodada={rodada} page={i + 1} total={storyPages.length} campeonato={campeonato} />
           </div>
         ))}
         {/* Classification stories */}
         {classDiv.map((d, i) => (
           d.tabela.length > 0 && (
             <div key={`cls-${d.key}`} ref={el => { classRefs.current[i] = el; }}>
-              <ClassificacaoStory label={d.label} tabela={d.tabela} />
+              <ClassificacaoStory label={d.label} tabela={d.tabela} campeonato={campeonato} />
             </div>
           )
         ))}

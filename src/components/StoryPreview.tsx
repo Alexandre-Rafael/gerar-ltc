@@ -7,6 +7,7 @@ interface Props {
   rodada: string;
   page: number;
   total: number;
+  campeonato?: string;
 }
 
 function Dot() {
@@ -121,7 +122,7 @@ function DivCard({ divisao }: { divisao: Divisao }) {
   );
 }
 
-export function StoryPreview({ divisoes, rodada, page, total }: Props) {
+export function StoryPreview({ divisoes, rodada, page, total, campeonato = "Copa Fácil" }: Props) {
   const active = divisoes.filter((d) => d.jogos.length > 0);
   const metaLabel = total > 1 ? `${rodada} · PÁG ${page}/${total}` : rodada;
 
@@ -155,6 +156,9 @@ export function StoryPreview({ divisoes, rodada, page, total }: Props) {
           <TitleLine text="JOGOS" color="#f9f9f9" size={112} />
           <TitleLine text="DA" color="#c7f465" size={108} />
           <TitleLine text="RODADA" color="#f9f9f9" size={100} />
+          <span style={{ fontFamily: "Arial, sans-serif", fontSize: 28, fontWeight: 700, color: "#c7f465", letterSpacing: 2, marginTop: 10, opacity: 0.85 }}>
+            {campeonato.toUpperCase()}
+          </span>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo.png" alt="LTC" style={{ width: 140, height: 140, objectFit: "contain" }} />
