@@ -65,6 +65,20 @@ Se não houver jogos em aberto, retorne: {"jogos": []}`,
     const parsed = JSON.parse(match?.[0] ?? '{"jogos":[]}') as {
       jogos: Jogo[];
     };
+
+    parsed.jogos.sort((a, b) => {
+      const key = (data: string, hora: string) => {
+        const d = data.match(/(\d{1,2})\/(\d{1,2})/);
+        const h = hora.match(/(\d{1,2}):(\d{2})/);
+        const day   = d ? parseInt(d[1]) : 0;
+        const month = d ? parseInt(d[2]) : 0;
+        const hour  = h ? parseInt(h[1]) : 0;
+        const min   = h ? parseInt(h[2]) : 0;
+        return month * 1000000 + day * 10000 + hour * 100 + min;
+      };
+      return key(a.data, a.hora) - key(b.data, b.hora);
+    });
+
     return NextResponse.json(parsed);
   } catch {
     return NextResponse.json({ jogos: [] });
