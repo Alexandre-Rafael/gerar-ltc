@@ -170,25 +170,6 @@ export function StoryPreview({ divisoes, rodada, page, total, campeonato = "Copa
         <img src="/logo.png" alt="LTC" style={{ width: 140, height: 140, objectFit: "contain" }} />
       </section>
 
-      {/* META BAR */}
-      {campeonato !== "Copa Sicredi" && (
-        <section
-          style={{
-            height: 54,
-            background: "#0b1220",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 14,
-          }}
-        >
-          <Dot />
-          <span style={{ fontFamily: "'Cubano', Impact, Arial, sans-serif", fontSize: 25, color: "#f9f9f9", letterSpacing: 3 }}>
-            {metaLabel.toUpperCase()}
-          </span>
-          <Dot />
-        </section>
-      )}
 
       {/* CARDS */}
       <section style={{ padding: "34px 52px 36px", display: "flex", flexDirection: "column", gap: 16 }}>

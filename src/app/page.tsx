@@ -242,16 +242,6 @@ export default function Home() {
 
             {tab === "jogos" ? (
               <>
-                {campeonato !== "Copa Sicredi" && (
-                  <div>
-                    <label className="block text-xs font-bold tracking-widest text-white/40 mb-1.5">LABEL DA RODADA</label>
-                    <input
-                      value={rodada}
-                      onChange={e => setRodada(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#08a7cf] transition-colors"
-                    />
-                  </div>
-                )}
                 {divisoes.map(div => (
                   <UploadCard key={div.key} label={div.label} arquivo={div.arquivo} processando={div.processando}
                     jogos={div.jogos} erro={div.erro}
